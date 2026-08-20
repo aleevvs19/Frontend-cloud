@@ -1,0 +1,157 @@
+<div class="p360-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">🥖</span>
+      <div>
+        <h2>PEDIDOS 360</h2>
+        <span class="brand-sub">Red de Panaderías & Cafés</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active">📋 Comandas y Cocina</a>
+      <a class="nav-item">📦 Control de Stock (20)</a>
+      <a class="nav-item">📊 Reportes & Ventas</a>
+      <a class="nav-item">📜 Auditoría (Streaming)</a>
+      <a class="nav-item">⚙️ Configuración Red</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" (click)="logout()">🚪 Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <!-- Content Area -->
+  <div class="main-wrapper">
+    <!-- Topbar con RBAC y Selección de Sucursal -->
+    <header class="topbar">
+      <div class="topbar-filters">
+        <div class="select-group">
+          <label>🏬 Sucursal:</label>
+          <select [value]="selectedStore" (change)="selectedStore = $any($event.target).value">
+            @for (store of stores; track store) {
+              <option [value]="store">{{ store }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="select-group">
+          <label>👤 Rol Activo (RBAC):</label>
+          <select [value]="currentRole" (change)="currentRole = $any($event.target).value">
+            @for (role of roles; track role) {
+              <option [value]="role">{{ role }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="user-profile">
+        <span class="badge-azure">Azure AD SSO</span>
+        <div class="avatar">AS</div>
+        <span class="user-email">ale.salazarv&#64;duocuc.cl</span>
+      </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="content-body">
+      <!-- Summary Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="m-icon">🏬</span>
+          <div>
+            <span class="m-title">Locales Conectados</span>
+            <strong class="m-value">20 / 20 Activos</strong>
+          </div>
+        </div>
+        <div class="metric-card">
+          <span class="m-icon">⚡</span>
+          <div>
+            <span class="m-title">Canal Asíncrono</span>
+            <strong class="m-value">RabbitMQ & Kafka</strong>
+          </div>
+        </div>
+        <div class="metric-card warning">
+          <span class="m-icon">⚠️</span>
+          <div>
+            <span class="m-title">Alertas de Stock</span>
+            <strong class="m-value">2 Harinas Críticas</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- KDS - Kanban Board de Pedidos para Cocina / Despacho -->
+      <div class="section-card">
+        <div class="card-header">
+          <h3>Pantalla de Cocina & Monitoreo de Pedidos</h3>
+          <span class="live-pill">🔴 Tiempo Real (WebSockets)</span>
+        </div>
+
+        <div class="orders-grid">
+          @for (order of orders; track order.id) {
+            <div class="order-card" [class.in-kitchen]="order.status === 'En Cocina'">
+              <div class="order-card-header">
+                <span class="order-id">{{ order.id }}</span>
+                <span class="order-type" [class.pickup]="order.type === 'Retiro en Tienda'">
+                  {{ order.type === 'A Domicilio' ? '🛵 Domicilio' : '🛍️ Retiro' }}
+                </span>
+              </div>
+
+              <div class="order-store">🏬 {{ order.store }}</div>
+              <div class="order-client">👤 {{ order.client }}</div>
+
+              <ul class="order-items">
+                @for (item of order.items; track item.name) {
+                  <li><strong>{{ item.qty }}x</strong> {{ item.name }}</li>
+                }
+              </ul>
+
+              <div class="order-footer">
+                <span class="order-total">{{ order.total | currency:'CLP':'symbol':'1.0-0' }}</span>
+                
+                <button class="btn-status" (click)="advanceOrderStatus(order)">
+                  {{ order.status }} ➔
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Tabla de Auditoría e Historial de Eventos -->
+      <div class="section-card">
+        <div class="card-header">
+          <h3>Auditoría y Trazabilidad Inalterable (Event Streaming)</h3>
+          <span class="subtext">Registro de operaciones por marca temporal y usuario</span>
+        </div>
+
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>ID Evento</th>
+              <th>Pedido</th>
+              <th>Usuario</th>
+              <th>Rol Acceso</th>
+              <th>Acción Registrada</th>
+              <th>Sucursal</th>
+              <th>Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of auditLogs; track log.id) {
+              <tr>
+                <td><code>{{ log.id }}</code></td>
+                <td><strong>{{ log.orderId }}</strong></td>
+                <td>{{ log.user }}</td>
+                <td><span class="role-tag">{{ log.role }}</span></td>
+                <td>{{ log.action }}</td>
+                <td>{{ log.store }}</td>
+                <td>{{ log.timestamp | date:'HH:mm:ss' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
