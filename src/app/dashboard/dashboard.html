@@ -1,69 +1,92 @@
-<div class="dashboard-container">
-  <div class="dashboard-header">
-    <h1>Panel General de Control</h1>
-    <p>Resumen operacional y flujo de ventas en red de sucursales.</p>
-  </div>
+<div class="dash-viewport">
+  <!-- Sub-Header del Panel -->
+  <header class="dash-header">
+    <div>
+      <div class="header-tag">📊 PANEL ADMINISTRATIVO</div>
+      <h1>Panel General de Control</h1>
+      <p>Resumen operacional y flujo de ventas en red de sucursales</p>
+    </div>
+    <a routerLink="/main" class="btn-back">
+      <span>⬅</span> Volver a la Tienda
+    </a>
+  </header>
 
-  <!-- Métricas KPI -->
-  <div class="kpi-grid">
-    <div class="kpi-card" *ngFor="let kpi of kpis">
-      <div class="kpi-top">
-        <span class="kpi-title">{{ kpi.title }}</span>
-        <span class="kpi-icon">{{ kpi.icon }}</span>
+  <!-- Tarjetas de Métricas -->
+  <section class="metrics-grid">
+    <div class="metric-card" *ngFor="let stat of stats">
+      <div class="metric-top">
+        <span class="m-label">{{ stat.label }}</span>
+        <div class="m-icon" [style.background-color]="stat.color" [style.color]="stat.iconColor">
+          {{ stat.icon }}
+        </div>
       </div>
-      <div class="kpi-value">{{ kpi.value }}</div>
-      <div class="kpi-detail" [class.positive]="kpi.positive" [class.negative]="!kpi.positive">
-        {{ kpi.detail }}
+      <div class="m-value">{{ stat.value }}</div>
+      <div class="m-badge" [class.negative]="!stat.positive">
+        {{ stat.change }}
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Tablas y Paneles -->
-  <div class="content-grid">
+  <!-- Layout Principal (Tabla + Alertas) -->
+  <div class="dash-content">
     <!-- Tabla de Pedidos -->
-    <div class="panel-card main-table">
-      <h3>Últimos Pedidos Recibidos</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Sucursal</th>
-            <th>Detalle</th>
-            <th>Total</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let order of recentOrders">
-            <td><strong>{{ order.id }}</strong></td>
-            <td>{{ order.branch }}</td>
-            <td class="text-muted">{{ order.items }}</td>
-            <td><strong>{{ order.total }}</strong></td>
-            <td><span class="badge" [ngClass]="order.badgeClass">{{ order.status }}</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <section class="panel-card orders-section">
+      <div class="card-header">
+        <div>
+          <h2>Últimos Pedidos Recibidos</h2>
+          <p>Monitoreo en tiempo real</p>
+        </div>
+        <button class="btn-subtle">Ver todos</button>
+      </div>
 
-    <!-- Panel de Alertas / Insumos -->
-    <div class="panel-card alert-panel">
-      <h3>Alertas de Inventario</h3>
-      <ul class="alert-list">
-        <li>
-          <span class="alert-icon">⚠️</span>
-          <div>
-            <strong>Harina de Trigo Especial</strong>
-            <p>Stock crítico en Sucursal Ñuñoa (12kg restantes)</p>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Sucursal</th>
+              <th>Detalle</th>
+              <th>Total</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of recentOrders">
+              <td class="font-mono font-bold">{{ order.id }}</td>
+              <td class="font-semibold">{{ order.branch }}</td>
+              <td class="text-muted">{{ order.detail }}</td>
+              <td class="font-bold">{{ order.total }}</td>
+              <td>
+                <span class="status-pill {{ order.statusClass }}">{{ order.status }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sidebar Alertas -->
+    <section class="panel-card alerts-section">
+      <div class="card-header">
+        <div>
+          <h2>Alertas de Inventario</h2>
+          <p>Insumos requeridos</p>
+        </div>
+        <span class="alert-count">2</span>
+      </div>
+
+      <div class="alerts-list">
+        <div class="alert-item" *ngFor="let alert of inventoryAlerts">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-info">
+            <div class="alert-top">
+              <h4>{{ alert.title }}</h4>
+              <span class="alert-tag">{{ alert.level }}</span>
+            </div>
+            <p>{{ alert.desc }}</p>
           </div>
-        </li>
-        <li>
-          <span class="alert-icon">⚠️</span>
-          <div>
-            <strong>Mantequilla repostera</strong>
-            <p>Reabastecer en Centro de Distribución</p>
-          </div>
-        </li>
-      </ul>
-    </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>

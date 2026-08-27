@@ -1,41 +1,29 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
-import { AuthenticationResult } from '@azure/msal-browser';
 
 @Component({
   selector: 'app-login',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class LoginComponent {
   constructor(
-    private msalService: MsalService,
-    private router: Router
+    private router: Router,
+    private msalService: MsalService
   ) {}
 
-  // Login tradicional
   onLogin(): void {
-    this.router.navigate(['/main']);
+    this.router.navigate(['/main/dashboard']);
   }
 
-  // Login con Microsoft Azure AD
   async loginWithMSAL(): Promise<void> {
-    try {
-      await this.msalService.instance.initialize();
-
-      this.msalService.loginPopup().subscribe({
-        next: (result: AuthenticationResult) => {
-          if (result && result.account) {
-            this.msalService.instance.setActiveAccount(result.account);
-            this.router.navigate(['/main']);
-          }
-        },
-        error: (err) => console.error('Error durante la autenticación:', err)
-      });
-    } catch (error) {
-      console.error('Error al inicializar MSAL:', error);
-    }
+    await this.msalService.instance.initialize();
+    this.msalService.loginRedirect({
+      scopes: ['user.read']
+    });
   }
 }

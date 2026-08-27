@@ -7,14 +7,7 @@ import { Dashboard } from './dashboard/dashboard';
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { 
-    path: 'main', 
-    component: MainComponent,
-    canActivate: [MsalGuard],
-    children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dashboard }
-    ]
-  },
+  { path: 'main', component: MainComponent, canActivate: [MsalGuard] },
+  { path: 'dashboard', component: Dashboard, canActivate: [MsalGuard] },
   { path: '**', redirectTo: 'login' }
 ];
