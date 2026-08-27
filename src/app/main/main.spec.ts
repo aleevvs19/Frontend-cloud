@@ -1,19 +1,33 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
+import { MainComponent } from './main';
 
-import { Main } from './main';
+describe('MainComponent', () => {
+  let component: MainComponent;
+  let fixture: ComponentFixture<MainComponent>;
 
-describe('Main', () => {
-  let component: Main;
-  let fixture: ComponentFixture<Main>;
+  // Mock simulado para evitar errores de inyección de MSAL
+  const msalServiceMock = {
+    instance: {
+      getActiveAccount: () => ({ name: 'Usuario Prueba', username: 'test@pedidos360.cl' }),
+      setActiveAccount: () => {}
+    },
+    logoutRedirect: () => {}
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Main],
+      imports: [MainComponent],
+      providers: [
+        provideRouter([]),
+        { provide: MsalService, useValue: msalServiceMock }
+      ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Main);
+    fixture = TestBed.createComponent(MainComponent);
     component = fixture.componentInstance;
-    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   it('should create', () => {

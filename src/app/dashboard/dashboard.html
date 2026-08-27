@@ -1,0 +1,69 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Panel General de Control</h1>
+    <p>Resumen operacional y flujo de ventas en red de sucursales.</p>
+  </div>
+
+  <!-- Métricas KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card" *ngFor="let kpi of kpis">
+      <div class="kpi-top">
+        <span class="kpi-title">{{ kpi.title }}</span>
+        <span class="kpi-icon">{{ kpi.icon }}</span>
+      </div>
+      <div class="kpi-value">{{ kpi.value }}</div>
+      <div class="kpi-detail" [class.positive]="kpi.positive" [class.negative]="!kpi.positive">
+        {{ kpi.detail }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Tablas y Paneles -->
+  <div class="content-grid">
+    <!-- Tabla de Pedidos -->
+    <div class="panel-card main-table">
+      <h3>Últimos Pedidos Recibidos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Sucursal</th>
+            <th>Detalle</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of recentOrders">
+            <td><strong>{{ order.id }}</strong></td>
+            <td>{{ order.branch }}</td>
+            <td class="text-muted">{{ order.items }}</td>
+            <td><strong>{{ order.total }}</strong></td>
+            <td><span class="badge" [ngClass]="order.badgeClass">{{ order.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Panel de Alertas / Insumos -->
+    <div class="panel-card alert-panel">
+      <h3>Alertas de Inventario</h3>
+      <ul class="alert-list">
+        <li>
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>Harina de Trigo Especial</strong>
+            <p>Stock crítico en Sucursal Ñuñoa (12kg restantes)</p>
+          </div>
+        </li>
+        <li>
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>Mantequilla repostera</strong>
+            <p>Reabastecer en Centro de Distribución</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

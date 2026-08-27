@@ -23,7 +23,8 @@
     <div class="divider"><span>o autenticar con IdaaS</span></div>
 
     <div class="social-buttons">
-      <button type="button" class="btn-msal" (click)="onLogin()">
+      <!-- Se corrigió el evento (click) para llamar a loginWithMSAL() -->
+      <button type="button" class="btn-msal" (click)="loginWithMSAL()">
         <svg width="18" height="18" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
           <path fill="#f35325" d="M1 1h10v10H1z"/>
           <path fill="#81bc06" d="M12 1h10v10H12z"/>

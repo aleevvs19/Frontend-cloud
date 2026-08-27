@@ -1,0 +1,145 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-header h1 {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #212529;
+}
+
+.dashboard-header p {
+  margin: 4px 0 0 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* KPIs */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.kpi-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpi-title {
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.kpi-icon {
+  font-size: 1.4rem;
+}
+
+.kpi-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 8px 0;
+}
+
+.kpi-detail {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.kpi-detail.positive { color: #198754; }
+.kpi-detail.negative { color: #dc3545; }
+
+/* Contenido Principal */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.panel-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+}
+
+.panel-card h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 0.9rem;
+}
+
+th {
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.text-muted {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+/* Badges */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-success { background-color: #d1e7dd; color: #0f5132; }
+.badge-info { background-color: #cff4fc; color: #055160; }
+.badge-warning { background-color: #fff3cd; color: #664d03; }
+.badge-danger { background-color: #f8d7da; color: #842029; }
+
+/* Alertas */
+.alert-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alert-list li {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.alert-list li strong {
+  font-size: 0.9rem;
+  color: #212529;
+}
+
+.alert-list li p {
+  margin: 2px 0 0 0;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
