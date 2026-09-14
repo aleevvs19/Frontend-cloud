@@ -1,4 +1,39 @@
-<div class="section-block" style="padding: 40px;">
-  <h2>🔍 Explorar Catálogo General</h2>
-  <p>Filtra y descubre todas las panaderías, cafeterías y productos artesanales disponibles en la red.</p>
+<div class="explorar-container">
+  <div class="explorar-header">
+    <h2>Catálogo Completo 🔍</h2>
+    <p>Filtra y descubre todas las delicias disponibles en nuestra red</p>
+  </div>
+
+  <!-- Buscador funcional -->
+  <div class="explorar-search-wrapper">
+    <span class="search-icon">🔍</span>
+    <input 
+      type="text" 
+      placeholder="Buscar por ingrediente, panadería o tipo de torta..." 
+      (input)="onSearchInput($event)"
+      (keyup.enter)="filtrar()"
+    />
+    <button class="btn-filtrar" (click)="filtrar()">Filtrar</button>
+  </div>
+
+  <!-- Parrilla de productos generada con *ngFor -->
+  <div class="explorar-grid">
+    <div class="explorar-card" *ngFor="let prod of productosFiltrados">
+      <div class="card-badge">{{ prod.tag }}</div>
+      <div class="card-img">{{ prod.image }}</div>
+      <div class="card-body">
+        <div class="card-rating">⭐ {{ prod.rating }}</div>
+        <h4>{{ prod.name }}</h4>
+        <div class="card-footer">
+          <span class="card-price">{{ prod.price }}</span>
+          <button class="btn-add-item" (click)="agregarAlCarrito(prod)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje si la búsqueda no arroja resultados -->
+  <div *ngIf="productosFiltrados.length === 0" style="text-align: center; padding: 40px; color: #6b7280;">
+    <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+  </div>
 </div>

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-sucursales',
   standalone: true,
   imports: [CommonModule],
-  template: `<div style="padding: 30px;"><h2>📍 Nuestras Sucursales</h2><p>Encuentra el local de Pedidos360 más cercano a ti.</p></div>`,
-  styleUrls: []
+  templateUrl: './sucursales.html',
+  styleUrls: ['./sucursales.css']
 })
 export class SucursalesComponent {}

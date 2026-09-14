@@ -3,11 +3,28 @@ import { MsalGuard } from '@azure/msal-angular';
 import { LoginComponent } from './login/login';
 import { MainComponent } from './main/main';
 import { Dashboard } from './dashboard/dashboard';
+import { ExplorarComponent } from './explorar/explorar';
+import { SucursalesComponent } from './sucursales/sucursales';
+import { MisPedidosComponent } from './mis-pedidos/mis-pedidos';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'main', component: MainComponent, canActivate: [MsalGuard] },
-  { path: 'dashboard', component: Dashboard, canActivate: [MsalGuard] },
-  { path: '**', redirectTo: 'login' }
+  { 
+    path: 'main', 
+    component: MainComponent, 
+    canActivate: [MsalGuard],
+    children: [
+      // Eliminamos el redirectTo para que Inicio (/main) funcione sin saltos
+      { path: 'explorar', component: ExplorarComponent },
+      { path: 'sucursales', component: SucursalesComponent },
+      { path: 'mis-pedidos', component: MisPedidosComponent }
+    ]
+  },
+  { 
+    path: 'dashboard', 
+    component: Dashboard, 
+    canActivate: [MsalGuard] 
+  },
+  { path: '**', redirectTo: 'login' } // Si la ruta no existe, te manda al login
 ];

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet, Router } from '@angular/router';
 import { MsalService } from '@azure/msal-angular';
+import { CartService } from '../cart';
 
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './main.html',
   styleUrl: './main.css'
 })
@@ -15,26 +16,24 @@ export class MainComponent implements OnInit {
   userInitial: string = 'U';
   cantidadCarrito: number = 0;
 
-  // Controla qué pestaña está activa ('inicio', 'explorar', 'sucursales', 'mis-pedidos')
-  currentTab: string = 'inicio';
-
   categories = [
-    { name: 'Panadería Artesanal', icon: '🥖', count: '24 items', bg: '#fef3c7' },
-    { name: 'Pastelería & Tortas', icon: '🎂', count: '18 items', bg: '#fce7f3' },
-    { name: 'Café & Bebidas', icon: '☕', count: '15 items', bg: '#e0e7ff' },
-    { name: 'Empanadas & Salados', icon: '🥟', count: '12 items', bg: '#ffedd5' }
+    { name: 'Panadería Artesanal', count: '12 locales', icon: '🍞', bg: '#fef3c7' },
+    { name: 'Cafetería de Especialidad', count: '8 locales', icon: '☕', bg: '#fce7f3' },
+    { name: 'Pastelería & Postres', count: '10 locales', icon: '🍰', bg: '#e0e7ff' },
+    { name: 'Bebidas & Refrescos', count: '6 locales', icon: '🧋', bg: '#d1fae5' }
   ];
 
   featuredProducts = [
-    { name: 'Croissant Mantequilla', price: '$1.800', rating: '4.9', image: '🥐', tag: 'Popular' },
-    { name: 'Capuchino Italiano 12oz', price: '$2.500', rating: '4.8', image: '☕', tag: 'Destacado' },
-    { name: 'Torta Hojarasca Manjar', price: '$18.900', rating: '5.0', image: '🍰', tag: 'Top Ventas' },
-    { name: 'Empanada Pino Horno', price: '$2.200', rating: '4.7', image: '🥟', tag: 'Clásico' }
+    { name: 'Baguette Rústica Madre', price: '$1.500', rating: '4.9', image: '🥖', tag: 'Artesanal' },
+    { name: 'Croissant Almendras', price: '$2.200', rating: '5.0', image: '🥐', tag: 'Especialidad' },
+    { name: 'Iced Latte Caramelo', price: '$2.800', rating: '4.7', image: '🧋', tag: 'Frío' },
+    { name: 'Kuchen de Nuez', price: '$16.500', rating: '4.8', image: '🥮', tag: 'Tradicional' }
   ];
 
   constructor(
     private msalService: MsalService,
-    private router: Router
+    public router: Router,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
@@ -43,15 +42,23 @@ export class MainComponent implements OnInit {
       this.userName = accounts[0].name || accounts[0].username || 'Usuario';
       this.userInitial = this.userName.charAt(0).toUpperCase();
     }
+
+    this.cartService.count$.subscribe(count => {
+      this.cantidadCarrito = count;
+    });
   }
 
-  cambiarPestaña(tab: string): void {
-    this.currentTab = tab;
+  agregarAlCarrito(prod: any) {
+    this.cartService.agregarProducto(prod);
   }
 
-  agregarAlCarrito(prod: any): void {
-    this.cantidadCarrito++;
-    console.log('Producto agregado al carrito:', prod.name);
+  // Funciones de navegación segura para el carrito y el admin
+  irAlCarrito() {
+    this.router.navigate(['/main/carrito']);
+  }
+
+  irAlAdmin() {
+    this.router.navigate(['/main/admin']);
   }
 
   logout(): void {

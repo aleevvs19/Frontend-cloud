@@ -14,10 +14,11 @@
     </nav>
 
     <div class="nav-actions">
-      <button class="cart-pill">
+      <!-- CARRITO CONVERTIDO A ETIQUETA <a> PARA NAVEGACIÓN ESTABLE -->
+      <a routerLink="/main/carrito" routerLinkActive="active" class="cart-pill" style="text-decoration: none; display: flex; align-items: center; cursor: pointer;">
         <span>🛒</span>
         <span class="cart-badge">{{ cantidadCarrito }}</span>
-      </button>
+      </a>
 
       <div class="user-chip">
         <div class="avatar-circle">{{ userInitial }}</div>
@@ -26,6 +27,8 @@
           <span class="u-role">Cliente MSAL</span>
         </div>
         <div class="action-buttons">
+          <!-- PANEL DE ADMINISTRACIÓN -->
+          <a routerLink="/main/admin" class="btn-dash-link" title="Panel Administrador" style="text-decoration: none; font-size: 1.1rem; padding: 4px;">⚙️</a>
           <a routerLink="/dashboard" class="btn-dash-link" title="Dashboard">📊</a>
           <button (click)="logout()" class="btn-logout-icon" title="Cerrar sesión">🚪</button>
         </div>
@@ -33,80 +36,90 @@
     </div>
   </header>
 
-  <!-- Hero Banner Estilo Warm Dark -->
-  <section class="hero-card">
-    <div class="hero-text">
-      <span class="hero-tag">✨ Sabor recién horneado</span>
-      <h1>Tu pedido favorito, directo a tu mesa.</h1>
-      <p>Selecciona entre las mejores panaderías y cafeterías de la red.</p>
+  <!-- ÁREA DINÁMICA DE COMPONENTES (Explorar, Sucursales, Mis Pedidos, Carrito, Admin) -->
+  <main class="main-content-area">
+    <router-outlet></router-outlet>
+  </main>
 
-      <div class="hero-search-wrapper">
-        <span class="search-icon">🔍</span>
-        <input type="text" placeholder="Buscar croissants, café en grano, tartas..." />
-        <button class="btn-search">Buscar</button>
-      </div>
+  <!-- CONTENIDO DE INICIO: Solo se muestra en la ruta exacta /main -->
+  <div *ngIf="router.url === '/main'">
+    
+    <!-- Hero Banner Estilo Warm Dark -->
+    <section class="hero-card">
+      <div class="hero-text">
+        <span class="hero-tag">✨ Sabor recién horneado</span>
+        <h1>Tu pedido favorito, directo a tu mesa.</h1>
+        <p>Selecciona entre las mejores panaderías y cafeterías de la red.</p>
 
-      <div class="quick-tags">
-        <span>Populares:</span>
-        <button class="tag-chip">🥐 Croissants</button>
-        <button class="tag-chip">☕ Espresso</button>
-        <button class="tag-chip">🍰 Tortas</button>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="floating-item item-1">🥐</div>
-      <div class="floating-item item-2">☕</div>
-      <div class="floating-item item-3">🎂</div>
-      <div class="glow-bg"></div>
-    </div>
-  </section>
-
-  <!-- Sección de Categorías -->
-  <section class="section-block">
-    <div class="section-header">
-      <div>
-        <h2>Categorías Principales</h2>
-        <p>Explora la variedad de nuestra red</p>
-      </div>
-    </div>
-
-    <div class="categories-masonry">
-      <div class="cat-card" *ngFor="let cat of categories">
-        <div class="cat-icon-wrap" [style.background-color]="cat.bg">
-          <span>{{ cat.icon }}</span>
+        <div class="hero-search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Buscar croissants, café en grano, tartas..." />
+          <button class="btn-search">Buscar</button>
         </div>
-        <div class="cat-info">
-          <h3>{{ cat.name }}</h3>
-          <span class="cat-count">{{ cat.count }}</span>
+
+        <div class="quick-tags">
+          <span>Populares:</span>
+          <button class="tag-chip">🥐 Croissants</button>
+          <button class="tag-chip">☕ Espresso</button>
+          <button class="tag-chip">🍰 Tortas</button>
         </div>
-        <span class="arrow-icon">→</span>
       </div>
-    </div>
-  </section>
 
-  <!-- Sección de Productos Destacados -->
-  <section class="section-block">
-    <div class="section-header">
-      <div>
-        <h2>Los más pedidos de hoy 🔥</h2>
-        <p>Favoritos de la comunidad esta semana</p>
+      <div class="hero-visual">
+        <div class="floating-item item-1">🥐</div>
+        <div class="floating-item item-2">☕</div>
+        <div class="floating-item item-3">🎂</div>
+        <div class="glow-bg"></div>
       </div>
-    </div>
+    </section>
 
-    <div class="products-grid">
-      <div class="product-card" *ngFor="let prod of featuredProducts">
-        <div class="product-badge">{{ prod.tag }}</div>
-        <div class="product-img">{{ prod.image }}</div>
-        <div class="product-body">
-          <div class="rating">⭐ {{ prod.rating }}</div>
-          <h4>{{ prod.name }}</h4>
-          <div class="product-footer">
-            <span class="price">{{ prod.price }}</span>
-            <button class="btn-add" (click)="agregarAlCarrito(prod)">+</button>
+    <!-- Sección de Categorías -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2>Categorías Principales</h2>
+          <p>Explora la variedad de nuestra red</p>
+        </div>
+      </div>
+
+      <div class="categories-masonry">
+        <div class="cat-card" *ngFor="let cat of categories">
+          <div class="cat-icon-wrap" [style.background-color]="cat.bg">
+            <span>{{ cat.icon }}</span>
+          </div>
+          <div class="cat-info">
+            <h3>{{ cat.name }}</h3>
+            <span class="cat-count">{{ cat.count }}</span>
+          </div>
+          <span class="arrow-icon">→</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de Productos Destacados -->
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2>Los más pedidos de hoy 🔥</h2>
+          <p>Favoritos de la comunidad esta semana</p>
+        </div>
+      </div>
+
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let prod of featuredProducts">
+          <div class="product-badge">{{ prod.tag }}</div>
+          <div class="product-img">{{ prod.image }}</div>
+          <div class="product-body">
+            <div class="rating">⭐ {{ prod.rating }}</div>
+            <h4>{{ prod.name }}</h4>
+            <div class="product-footer">
+              <span class="price">{{ prod.price }}</span>
+              <button class="btn-add" (click)="agregarAlCarrito(prod)">+</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+  </div>
 </div>
