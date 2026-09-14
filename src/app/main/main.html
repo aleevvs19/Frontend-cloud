@@ -7,16 +7,16 @@
     </div>
 
     <nav class="nav-pills">
-      <a routerLink="/main" class="pill-item active">Inicio</a>
-      <a href="#" class="pill-item">Explorar</a>
-      <a href="#" class="pill-item">Sucursales</a>
-      <a href="#" class="pill-item">Mis Pedidos</a>
+      <a routerLink="/main" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="pill-item">Inicio</a>
+      <a routerLink="/main/explorar" routerLinkActive="active" class="pill-item">Explorar</a>
+      <a routerLink="/main/sucursales" routerLinkActive="active" class="pill-item">Sucursales</a>
+      <a routerLink="/main/mis-pedidos" routerLinkActive="active" class="pill-item">Mis Pedidos</a>
     </nav>
 
     <div class="nav-actions">
       <button class="cart-pill">
         <span>🛒</span>
-        <span class="cart-badge">3</span>
+        <span class="cart-badge">{{ cantidadCarrito }}</span>
       </button>
 
       <div class="user-chip">
@@ -103,7 +103,7 @@
           <h4>{{ prod.name }}</h4>
           <div class="product-footer">
             <span class="price">{{ prod.price }}</span>
-            <button class="btn-add">+</button>
+            <button class="btn-add" (click)="agregarAlCarrito(prod)">+</button>
           </div>
         </div>
       </div>

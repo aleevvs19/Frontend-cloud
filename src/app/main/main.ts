@@ -13,6 +13,10 @@ import { MsalService } from '@azure/msal-angular';
 export class MainComponent implements OnInit {
   userName: string = 'Usuario';
   userInitial: string = 'U';
+  cantidadCarrito: number = 0;
+
+  // Controla qué pestaña está activa ('inicio', 'explorar', 'sucursales', 'mis-pedidos')
+  currentTab: string = 'inicio';
 
   categories = [
     { name: 'Panadería Artesanal', icon: '🥖', count: '24 items', bg: '#fef3c7' },
@@ -39,6 +43,15 @@ export class MainComponent implements OnInit {
       this.userName = accounts[0].name || accounts[0].username || 'Usuario';
       this.userInitial = this.userName.charAt(0).toUpperCase();
     }
+  }
+
+  cambiarPestaña(tab: string): void {
+    this.currentTab = tab;
+  }
+
+  agregarAlCarrito(prod: any): void {
+    this.cantidadCarrito++;
+    console.log('Producto agregado al carrito:', prod.name);
   }
 
   logout(): void {
