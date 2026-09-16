@@ -1,39 +1,67 @@
 <div class="explorar-container">
+  
+  <!-- Cabecera -->
   <div class="explorar-header">
-    <h2>Catálogo Completo 🔍</h2>
-    <p>Filtra y descubre todas las delicias disponibles en nuestra red</p>
+    <div class="header-icon">✨</div>
+    <div>
+      <h2>Catálogo Completo</h2>
+      <p>Filtra y descubre todas las delicias disponibles en nuestra red.</p>
+    </div>
   </div>
 
-  <!-- Buscador funcional -->
-  <div class="explorar-search-wrapper">
-    <span class="search-icon">🔍</span>
-    <input 
-      type="text" 
-      placeholder="Buscar por ingrediente, panadería o tipo de torta..." 
-      (input)="onSearchInput($event)"
-      (keyup.enter)="filtrar()"
-    />
-    <button class="btn-filtrar" (click)="filtrar()">Filtrar</button>
+  <!-- Barra de Búsqueda y Filtros -->
+  <div class="search-filter-section">
+    <div class="search-bar-wrapper">
+      <span class="search-symbol">🔍</span>
+      <input type="text" 
+             [(ngModel)]="terminoBusqueda" 
+             placeholder="Buscar croissants, café, pan de molde..." 
+             class="search-input" />
+    </div>
+
+    <!-- Pastillas de Categorías -->
+    <div class="category-pills">
+      <button *ngFor="let cat of categorias" 
+              (click)="filtrarPorCategoria(cat)"
+              [class.active]="categoriaActiva === cat"
+              class="cat-pill-btn">
+        {{ cat }}
+      </button>
+    </div>
   </div>
 
-  <!-- Parrilla de productos generada con *ngFor -->
-  <div class="explorar-grid">
-    <div class="explorar-card" *ngFor="let prod of productosFiltrados">
-      <div class="card-badge">{{ prod.tag }}</div>
-      <div class="card-img">{{ prod.image }}</div>
-      <div class="card-body">
-        <div class="card-rating">⭐ {{ prod.rating }}</div>
-        <h4>{{ prod.name }}</h4>
-        <div class="card-footer">
-          <span class="card-price">{{ prod.price }}</span>
-          <button class="btn-add-item" (click)="agregarAlCarrito(prod)">+</button>
+  <!-- Estado si no hay resultados -->
+  <div *ngIf="productosFiltrados.length === 0" class="no-results">
+    <span>🔍</span>
+    <h3>No encontramos productos</h3>
+    <p>Intenta buscando con otro término o cambia de categoría.</p>
+  </div>
+
+  <!-- Cuadrícula de Productos -->
+  <div class="products-grid-catalog">
+    <div *ngFor="let prod of productosFiltrados" class="catalog-card">
+      <div class="card-top-tags">
+        <span class="prod-badge">{{ prod.tag }}</span>
+        <span class="prod-rating">⭐ {{ prod.rating }}</span>
+      </div>
+
+      <div class="prod-img-container">
+        <span class="prod-emoji">{{ prod.image }}</span>
+      </div>
+
+      <div class="prod-details">
+        <span class="prod-category-tag">{{ prod.category }}</span>
+        <h3>{{ prod.name }}</h3>
+        <p class="prod-desc">{{ prod.desc }}</p>
+        
+        <div class="prod-footer">
+          <span class="prod-price">{{ prod.price }}</span>
+          <button (click)="agregarAlCarrito(prod)" class="btn-add-cart">
+            <span>+ Agregar</span>
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Mensaje si la búsqueda no arroja resultados -->
-  <div *ngIf="productosFiltrados.length === 0" style="text-align: center; padding: 40px; color: #6b7280;">
-    <p>No se encontraron productos que coincidan con tu búsqueda.</p>
-  </div>
 </div>

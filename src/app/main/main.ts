@@ -15,6 +15,9 @@ export class MainComponent implements OnInit {
   userName: string = 'Usuario';
   userInitial: string = 'U';
   cantidadCarrito: number = 0;
+  
+  // 1. VARIABLE DE SEGURIDAD
+  esAdmin: boolean = false; 
 
   categories = [
     { name: 'Panadería Artesanal', count: '12 locales', icon: '🍞', bg: '#fef3c7' },
@@ -41,6 +44,13 @@ export class MainComponent implements OnInit {
     if (accounts.length > 0) {
       this.userName = accounts[0].name || accounts[0].username || 'Usuario';
       this.userInitial = this.userName.charAt(0).toUpperCase();
+
+      const correoUsuario = accounts[0].username.toLowerCase();
+      
+      // ✅ VALIDACIÓN INFALIBLE: Detecta si tu usuario está en el correo
+      if (correoUsuario.includes('ale.salazarv') || correoUsuario.includes('admin')) {
+        this.esAdmin = true;
+      }
     }
 
     this.cartService.count$.subscribe(count => {
@@ -52,7 +62,6 @@ export class MainComponent implements OnInit {
     this.cartService.agregarProducto(prod);
   }
 
-  // Funciones de navegación segura para el carrito y el admin
   irAlCarrito() {
     this.router.navigate(['/main/carrito']);
   }

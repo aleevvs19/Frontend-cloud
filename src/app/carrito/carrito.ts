@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../cart';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './carrito.html',
   styleUrl: './carrito.css'
 })
@@ -16,30 +15,34 @@ export class CarritoComponent implements OnInit {
   constructor(private cartService: CartService) {}
 
   ngOnInit() {
+    // Obtenemos los productos reales sincronizados desde el servicio
     this.productosCarrito = this.cartService.obtenerProductos();
   }
 
-  eliminar(index: number) {
+  get totalPagar(): number {
+    return this.productosCarrito.reduce((acc, item) => {
+      // Limpia el texto del precio (ej. "$1.500" -> 1500) para calcular el total
+      const limpio = parseInt(item.price.replace('$', '').replace('.', ''), 10) || 0;
+      return acc + limpio;
+    }, 0);
+  }
+
+  eliminarItem(index: number) {
     this.cartService.eliminarProducto(index);
     this.productosCarrito = this.cartService.obtenerProductos();
   }
 
-  vaciar() {
+  vaciarCarrito() {
     this.cartService.vaciarCarrito();
     this.productosCarrito = [];
   }
 
-  calcularTotal(): string {
-    let total = 0;
-    this.productosCarrito.forEach(p => {
-      const num = parseInt(p.price.replace('$', '').replace('.', ''), 10) || 0;
-      total += num;
-    });
-    return '$' + total.toLocaleString('es-CL');
-  }
-
-  pagar() {
-    alert('¡Pedido confirmado y pagado con éxito! 🎉');
-    this.vaciar();
+  confirmarCompra() {
+    if (this.productosCarrito.length === 0) {
+      alert('Tu carrito está vacío.');
+      return;
+    }
+    alert('🎉 ¡Pedido realizado con éxito! Puedes revisarlo en la sección "Mis Pedidos".');
+    this.vaciarCarrito();
   }
 }

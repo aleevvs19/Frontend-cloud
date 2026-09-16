@@ -1,92 +1,134 @@
-<div class="dash-viewport">
-  <!-- Sub-Header del Panel -->
+<div class="dashboard-viewport">
+  
+  <!-- Cabecera del Panel -->
   <header class="dash-header">
     <div>
-      <div class="header-tag">📊 PANEL ADMINISTRATIVO</div>
+      <span class="dash-subtitle">📊 PANEL ADMINISTRATIVO</span>
       <h1>Panel General de Control</h1>
       <p>Resumen operacional y flujo de ventas en red de sucursales</p>
     </div>
-    <a routerLink="/main" class="btn-back">
-      <span>⬅</span> Volver a la Tienda
-    </a>
+    <button (click)="volverATienda()" class="btn-volver">
+      ← Volver a la Tienda
+    </button>
   </header>
 
-  <!-- Tarjetas de Métricas -->
-  <section class="metrics-grid">
-    <div class="metric-card" *ngFor="let stat of stats">
-      <div class="metric-top">
-        <span class="m-label">{{ stat.label }}</span>
-        <div class="m-icon" [style.background-color]="stat.color" [style.color]="stat.iconColor">
-          {{ stat.icon }}
-        </div>
+  <!-- Tarjetas KPI (Métricas Principales) -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">Pedidos Hoy</span>
+        <h2 class="kpi-value">142</h2>
+        <span class="kpi-trend positive">+12% vs ayer</span>
       </div>
-      <div class="m-value">{{ stat.value }}</div>
-      <div class="m-badge" [class.negative]="!stat.positive">
-        {{ stat.change }}
+      <div class="kpi-icon">📦</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">Ventas Totales</span>
+        <h2 class="kpi-value">$1.450.000</h2>
+        <span class="kpi-trend positive">+8% vs ayer</span>
       </div>
+      <div class="kpi-icon">💰</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">En Preparación</span>
+        <h2 class="kpi-value">18</h2>
+        <span class="kpi-trend warning">Atención requerida</span>
+      </div>
+      <div class="kpi-icon">⏳</div>
+    </div>
+
+    <!-- SUCURSALES ACTUALIZADAS A 4 / 4 -->
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">Sucursales Activas</span>
+        <h2 class="kpi-value">4 / 4</h2>
+        <span class="kpi-trend success">100% Operativo</span>
+      </div>
+      <div class="kpi-icon">🏢</div>
     </div>
   </section>
 
-  <!-- Layout Principal (Tabla + Alertas) -->
-  <div class="dash-content">
-    <!-- Tabla de Pedidos -->
-    <section class="panel-card orders-section">
-      <div class="card-header">
+  <!-- Sección Central (Tabla de Pedidos y Alertas) -->
+  <div class="dash-grid-main">
+    
+    <!-- Últimos Pedidos -->
+    <div class="dash-card main-table-section">
+      <div class="card-header-flex">
         <div>
-          <h2>Últimos Pedidos Recibidos</h2>
+          <h3>Últimos Pedidos Recibidos</h3>
           <p>Monitoreo en tiempo real</p>
         </div>
-        <button class="btn-subtle">Ver todos</button>
+        <button (click)="verTodosPedidos()" class="btn-text">Ver todos</button>
       </div>
 
-      <div class="table-wrapper">
-        <table class="data-table">
+      <div class="table-responsive">
+        <table class="styled-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Sucursal</th>
-              <th>Detalle</th>
-              <th>Total</th>
-              <th>Estado</th>
+              <th>SUCURSAL</th>
+              <th>DETALLE</th>
+              <th>TOTAL</th>
+              <th>ESTADO</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let order of recentOrders">
-              <td class="font-mono font-bold">{{ order.id }}</td>
-              <td class="font-semibold">{{ order.branch }}</td>
-              <td class="text-muted">{{ order.detail }}</td>
-              <td class="font-bold">{{ order.total }}</td>
+            <tr *ngFor="let p of pedidosRecientes">
+              <td class="id-col">{{ p.id }}</td>
+              <td class="font-weight-600">{{ p.sucursal }}</td>
+              <td class="text-muted">{{ p.detalle }}</td>
+              <td class="font-weight-700">{{ p.total }}</td>
               <td>
-                <span class="status-pill {{ order.statusClass }}">{{ order.status }}</span>
+                <span class="status-pill" [style.background]="p.color" [style.color]="p.text">
+                  {{ p.estado }}
+                </span>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </section>
+    </div>
 
-    <!-- Sidebar Alertas -->
-    <section class="panel-card alerts-section">
-      <div class="card-header">
+    <!-- Alertas de Inventario Sincronizadas -->
+    <div class="dash-card inventory-section">
+      <div class="card-header-flex">
         <div>
-          <h2>Alertas de Inventario</h2>
+          <h3>Alertas de Inventario</h3>
           <p>Insumos requeridos</p>
         </div>
-        <span class="alert-count">2</span>
+        <span class="alert-badge-count">2</span>
       </div>
 
       <div class="alerts-list">
-        <div class="alert-item" *ngFor="let alert of inventoryAlerts">
-          <div class="alert-icon">⚠️</div>
-          <div class="alert-info">
-            <div class="alert-top">
-              <h4>{{ alert.title }}</h4>
-              <span class="alert-tag">{{ alert.level }}</span>
+        
+        <div class="alert-box critical" (click)="reabastecerInsumo('Harina de Trigo Especial')">
+          <div class="alert-icon-box">⚠️</div>
+          <div class="alert-content">
+            <div class="alert-title-row">
+              <h4>Harina de Trigo Especial</h4>
+              <span class="tag-badge critical">CRÍTICO</span>
             </div>
-            <p>{{ alert.desc }}</p>
+            <p>Stock crítico en Sucursal Providencia (12kg restantes)</p>
           </div>
         </div>
+
+        <div class="alert-box warning" (click)="reabastecerInsumo('Mantequilla repostera')">
+          <div class="alert-icon-box">⚠️</div>
+          <div class="alert-content">
+            <div class="alert-title-row">
+              <h4>Mantequilla repostera</h4>
+              <span class="tag-badge warning">ADVERTENCIA</span>
+            </div>
+            <p>Reabastecer en Centro de Distribución (Maipú)</p>
+          </div>
+        </div>
+
       </div>
-    </section>
+    </div>
+
   </div>
 </div>
