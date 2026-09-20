@@ -1,0 +1,55 @@
+<div style="padding: 30px 20px; max-width: 900px; margin: 0 auto;">
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+      <h2 style="margin: 0 0 6px 0; font-size: 2rem; color: #1f2937;">🛒 Tu Carrito de Compras</h2>
+      <p style="color: #6b7280; margin: 0;">Revisa los productos seleccionados antes de confirmar tu pedido.</p>
+    </div>
+    <button *ngIf="productosCarrito.length > 0" (click)="vaciarCarrito()" style="background: #fee2e2; color: #dc2626; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; cursor: pointer;">
+      Vaciar Carrito
+    </button>
+  </div>
+
+  <!-- Si está vacío -->
+  <div *ngIf="productosCarrito.length === 0" style="text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1px dashed #d1d5db;">
+    <span style="font-size: 3rem;">🛍️</span>
+    <h3 style="margin: 16px 0 6px 0; color: #1f2937;">Tu carrito está vacío</h3>
+    <p style="color: #6b7280;">Explora el catálogo y añade productos deliciosos.</p>
+  </div>
+
+  <!-- Lista de productos -->
+  <div *ngIf="productosCarrito.length > 0" style="display: flex; flex-direction: column; gap: 16px;">
+    
+    <div *ngFor="let item of productosCarrito; let i = index" style="background: white; border: 1px solid #f3f4f6; border-radius: 16px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+      
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <span style="font-size: 2.5rem; background: #fdf8f6; padding: 10px; border-radius: 12px;">{{ item.image }}</span>
+        <div>
+          <h4 style="margin: 0 0 4px 0; font-size: 1.1rem; color: #111827;">{{ item.name }}</h4>
+          <span style="background: #fff7ed; color: #c2410c; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;">{{ item.tag || item.category }}</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 24px;">
+        <span style="font-size: 1.2rem; font-weight: 800; color: #111827;">{{ item.price }}</span>
+        <button (click)="eliminarItem(i)" style="background: #fee2e2; color: #dc2626; border: none; width: 32px; height: 32px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          ✕
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Total y botón de pagar -->
+    <div style="background: white; border: 1px solid #f3f4f6; border-radius: 16px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+      <div>
+        <div style="font-size: 0.9rem; color: #6b7280; font-weight: 600;">Total a pagar:</div>
+        <div style="font-size: 1.8rem; font-weight: 900; color: #111827;">${{ totalPagar.toLocaleString('es-CL') }}</div>
+      </div>
+      <button (click)="confirmarCompra()" style="background: #059669; color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 10px rgba(5,150,105,0.2);">
+        Confirmar y Pagar
+      </button>
+    </div>
+
+  </div>
+
+</div>

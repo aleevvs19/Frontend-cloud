@@ -1,0 +1,117 @@
+<div class="app-viewport">
+  <!-- Topbar Flotante Premium -->
+  <header class="navbar-container">
+    <div class="nav-brand">
+      <div class="brand-badge">🥖</div>
+      <span class="brand-title">PEDIDOS<span>360</span></span>
+    </div>
+
+    <nav class="nav-pills">
+      <a routerLink="/main" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="pill-item">Inicio</a>
+      <a routerLink="/main/explorar" routerLinkActive="active" class="pill-item">Explorar</a>
+      <a routerLink="/main/sucursales" routerLinkActive="active" class="pill-item">Sucursales</a>
+      <a routerLink="/main/mis-pedidos" routerLinkActive="active" class="pill-item">Mis Pedidos</a>
+    </nav>
+
+    <div class="nav-actions">
+      <!-- BOTÓN DEL CARRITO -->
+      <button (click)="irAlCarrito()" class="cart-pill" style="cursor: pointer; border: none; background: #f3f4f6;">
+        <span>🛒</span>
+        <span class="cart-badge">{{ cantidadCarrito }}</span>
+      </button>
+
+      <div class="user-chip">
+        <div class="avatar-circle">{{ userInitial }}</div>
+        <div class="user-meta">
+          <span class="u-name">{{ userName }}</span>
+          <span class="u-role">Cliente MSAL</span>
+        </div>
+        <div class="action-buttons">
+          
+          <!-- AQUÍ ESTÁ LA MAGIA: Agregamos *ngIf="esAdmin" para ocultar la tuerca -->
+          <button *ngIf="esAdmin" (click)="irAlAdmin()" class="btn-dash-link" title="Panel Administrador" style="background: transparent; border: none; cursor: pointer; font-size: 1.1rem; padding: 4px;">⚙️</button>
+          
+          <a routerLink="/main/dashboard" class="btn-dash-link" title="Dashboard">📊</a>
+          <button (click)="logout()" class="btn-logout-icon" title="Cerrar sesión">🚪</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ÁREA DINÁMICA DE COMPONENTES -->
+  <main class="main-content-area">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- CONTENIDO DE INICIO -->
+  <div *ngIf="router.url === '/main'">
+    <section class="hero-card">
+      <div class="hero-text">
+        <span class="hero-tag">✨ Sabor recién horneado</span>
+        <h1>Tu pedido favorito, directo a tu mesa.</h1>
+        <p>Selecciona entre las mejores panaderías y cafeterías de la red.</p>
+        <div class="hero-search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Buscar croissants, café en grano, tartas..." />
+          <button class="btn-search">Buscar</button>
+        </div>
+        <div class="quick-tags">
+          <span>Populares:</span>
+          <button class="tag-chip">🥐 Croissants</button>
+          <button class="tag-chip">☕ Espresso</button>
+          <button class="tag-chip">🍰 Tortas</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-item item-1">🥐</div>
+        <div class="floating-item item-2">☕</div>
+        <div class="floating-item item-3">🎂</div>
+        <div class="glow-bg"></div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2>Categorías Principales</h2>
+          <p>Explora la variedad de nuestra red</p>
+        </div>
+      </div>
+      <div class="categories-masonry">
+        <div class="cat-card" *ngFor="let cat of categories">
+          <div class="cat-icon-wrap" [style.background-color]="cat.bg">
+            <span>{{ cat.icon }}</span>
+          </div>
+          <div class="cat-info">
+            <h3>{{ cat.name }}</h3>
+            <span class="cat-count">{{ cat.count }}</span>
+          </div>
+          <span class="arrow-icon">→</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-block">
+      <div class="section-header">
+        <div>
+          <h2>Los más pedidos de hoy 🔥</h2>
+          <p>Favoritos de la comunidad esta semana</p>
+        </div>
+      </div>
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let prod of featuredProducts">
+          <div class="product-badge">{{ prod.tag }}</div>
+          <div class="product-img">{{ prod.image }}</div>
+          <div class="product-body">
+            <div class="rating">⭐ {{ prod.rating }}</div>
+            <h4>{{ prod.name }}</h4>
+            <div class="product-footer">
+              <span class="price">{{ prod.price }}</span>
+              <button class="btn-add" (click)="agregarAlCarrito(prod)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

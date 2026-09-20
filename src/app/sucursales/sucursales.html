@@ -1,0 +1,37 @@
+<div class="sucursales-container">
+  
+  <!-- Cabecera -->
+  <div class="sucursales-header">
+    <div class="header-badge">📍</div>
+    <div>
+      <h2>Nuestra Red de Sucursales</h2>
+      <p>Elige tu local más cercano para retiro en tienda o consumo presencial.</p>
+    </div>
+  </div>
+
+  <!-- Cuadrícula de Sucursales -->
+  <div class="sucursales-grid">
+    <div *ngFor="let suc of listaSucursales" class="sucursal-card">
+      
+      <div class="card-top">
+        <div class="suc-icon-wrap">{{ suc.icon }}</div>
+        <span class="suc-badge">{{ suc.badge }}</span>
+      </div>
+
+      <div class="card-body">
+        <h3>{{ suc.name }}</h3>
+        <p class="suc-info">📍 {{ suc.address }}</p>
+        <p class="suc-info">⏰ {{ suc.hours }}</p>
+        <div class="suc-status">🟢 {{ suc.status }}</div>
+      </div>
+
+      <div class="card-footer">
+        <button (click)="seleccionarSucursal(suc)" class="btn-seleccionar">
+          Seleccionar Local
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

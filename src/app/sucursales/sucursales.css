@@ -1,0 +1,145 @@
+.sucursales-container {
+  padding: 30px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.sucursales-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 36px;
+}
+
+.header-badge {
+  font-size: 2.5rem;
+  background: #fff7ed;
+  padding: 12px 18px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.1);
+}
+
+.sucursales-header h2 {
+  margin: 0 0 6px 0;
+  font-size: 2.2rem;
+  color: #1f2937;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.sucursales-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+/* Cuadrícula de tarjetas */
+.sucursales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.sucursal-card {
+  background: white;
+  border: 1px solid #f3f4f6;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sucursal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px -5px rgba(234, 88, 12, 0.12);
+  border-color: #fdba74;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.suc-icon-wrap {
+  font-size: 2.5rem;
+  background: #f9fafb;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid #f3f4f6;
+}
+
+.suc-badge {
+  background: #fff7ed;
+  color: #c2410c;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.card-body h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.3rem;
+  color: #111827;
+  font-weight: 800;
+}
+
+.suc-info {
+  color: #4b5563;
+  font-size: 0.95rem;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.suc-status {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.card-footer {
+  margin-top: 24px;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 16px;
+}
+
+.btn-seleccionar {
+  width: 100%;
+  background: #1f2937;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-seleccionar:hover {
+  background: #ea580c; /* Naranja corporativo */
+}
+
+.btn-seleccionar:active {
+  transform: scale(0.98);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

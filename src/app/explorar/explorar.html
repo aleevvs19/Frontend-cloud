@@ -1,0 +1,67 @@
+<div class="explorar-container">
+  
+  <!-- Cabecera -->
+  <div class="explorar-header">
+    <div class="header-icon">✨</div>
+    <div>
+      <h2>Catálogo Completo</h2>
+      <p>Filtra y descubre todas las delicias disponibles en nuestra red.</p>
+    </div>
+  </div>
+
+  <!-- Barra de Búsqueda y Filtros -->
+  <div class="search-filter-section">
+    <div class="search-bar-wrapper">
+      <span class="search-symbol">🔍</span>
+      <input type="text" 
+             [(ngModel)]="terminoBusqueda" 
+             placeholder="Buscar croissants, café, pan de molde..." 
+             class="search-input" />
+    </div>
+
+    <!-- Pastillas de Categorías -->
+    <div class="category-pills">
+      <button *ngFor="let cat of categorias" 
+              (click)="filtrarPorCategoria(cat)"
+              [class.active]="categoriaActiva === cat"
+              class="cat-pill-btn">
+        {{ cat }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado si no hay resultados -->
+  <div *ngIf="productosFiltrados.length === 0" class="no-results">
+    <span>🔍</span>
+    <h3>No encontramos productos</h3>
+    <p>Intenta buscando con otro término o cambia de categoría.</p>
+  </div>
+
+  <!-- Cuadrícula de Productos -->
+  <div class="products-grid-catalog">
+    <div *ngFor="let prod of productosFiltrados" class="catalog-card">
+      <div class="card-top-tags">
+        <span class="prod-badge">{{ prod.tag }}</span>
+        <span class="prod-rating">⭐ {{ prod.rating }}</span>
+      </div>
+
+      <div class="prod-img-container">
+        <span class="prod-emoji">{{ prod.image }}</span>
+      </div>
+
+      <div class="prod-details">
+        <span class="prod-category-tag">{{ prod.category }}</span>
+        <h3>{{ prod.name }}</h3>
+        <p class="prod-desc">{{ prod.desc }}</p>
+        
+        <div class="prod-footer">
+          <span class="prod-price">{{ prod.price }}</span>
+          <button (click)="agregarAlCarrito(prod)" class="btn-add-cart">
+            <span>+ Agregar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

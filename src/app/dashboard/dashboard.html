@@ -1,0 +1,134 @@
+<div class="dashboard-viewport">
+  
+  <!-- Cabecera del Panel -->
+  <header class="dash-header">
+    <div>
+      <span class="dash-subtitle">📊 PANEL ADMINISTRATIVO</span>
+      <h1>Panel General de Control</h1>
+      <p>Resumen operacional y flujo de ventas en red de sucursales</p>
+    </div>
+    <button (click)="volverATienda()" class="btn-volver">
+      ← Volver a la Tienda
+    </button>
+  </header>
+
+  <!-- Tarjetas KPI (Métricas Principales) -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">Pedidos Hoy</span>
+        <h2 class="kpi-value">142</h2>
+        <span class="kpi-trend positive">+12% vs ayer</span>
+      </div>
+      <div class="kpi-icon">📦</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">Ventas Totales</span>
+        <h2 class="kpi-value">$1.450.000</h2>
+        <span class="kpi-trend positive">+8% vs ayer</span>
+      </div>
+      <div class="kpi-icon">💰</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">En Preparación</span>
+        <h2 class="kpi-value">18</h2>
+        <span class="kpi-trend warning">Atención requerida</span>
+      </div>
+      <div class="kpi-icon">⏳</div>
+    </div>
+
+    <!-- SUCURSALES ACTUALIZADAS A 4 / 4 -->
+    <div class="kpi-card">
+      <div class="kpi-info">
+        <span class="kpi-title">Sucursales Activas</span>
+        <h2 class="kpi-value">4 / 4</h2>
+        <span class="kpi-trend success">100% Operativo</span>
+      </div>
+      <div class="kpi-icon">🏢</div>
+    </div>
+  </section>
+
+  <!-- Sección Central (Tabla de Pedidos y Alertas) -->
+  <div class="dash-grid-main">
+    
+    <!-- Últimos Pedidos -->
+    <div class="dash-card main-table-section">
+      <div class="card-header-flex">
+        <div>
+          <h3>Últimos Pedidos Recibidos</h3>
+          <p>Monitoreo en tiempo real</p>
+        </div>
+        <button (click)="verTodosPedidos()" class="btn-text">Ver todos</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>SUCURSAL</th>
+              <th>DETALLE</th>
+              <th>TOTAL</th>
+              <th>ESTADO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of pedidosRecientes">
+              <td class="id-col">{{ p.id }}</td>
+              <td class="font-weight-600">{{ p.sucursal }}</td>
+              <td class="text-muted">{{ p.detalle }}</td>
+              <td class="font-weight-700">{{ p.total }}</td>
+              <td>
+                <span class="status-pill" [style.background]="p.color" [style.color]="p.text">
+                  {{ p.estado }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Alertas de Inventario Sincronizadas -->
+    <div class="dash-card inventory-section">
+      <div class="card-header-flex">
+        <div>
+          <h3>Alertas de Inventario</h3>
+          <p>Insumos requeridos</p>
+        </div>
+        <span class="alert-badge-count">2</span>
+      </div>
+
+      <div class="alerts-list">
+        
+        <div class="alert-box critical" (click)="reabastecerInsumo('Harina de Trigo Especial')">
+          <div class="alert-icon-box">⚠️</div>
+          <div class="alert-content">
+            <div class="alert-title-row">
+              <h4>Harina de Trigo Especial</h4>
+              <span class="tag-badge critical">CRÍTICO</span>
+            </div>
+            <p>Stock crítico en Sucursal Providencia (12kg restantes)</p>
+          </div>
+        </div>
+
+        <div class="alert-box warning" (click)="reabastecerInsumo('Mantequilla repostera')">
+          <div class="alert-icon-box">⚠️</div>
+          <div class="alert-content">
+            <div class="alert-title-row">
+              <h4>Mantequilla repostera</h4>
+              <span class="tag-badge warning">ADVERTENCIA</span>
+            </div>
+            <p>Reabastecer en Centro de Distribución (Maipú)</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
