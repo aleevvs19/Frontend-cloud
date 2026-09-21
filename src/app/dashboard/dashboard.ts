@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,17 +11,40 @@ import { Router } from '@angular/router';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class DashboardComponent {
-  constructor(private router: Router) {}
+export class DashboardComponent implements OnInit {
+  pedidosRecientes: any[] = [];
+  isLoading: boolean = true;
 
-  pedidosRecientes = [
-    { id: '#P-3091', sucursal: 'Sucursal Providencia', detalle: '25x Marraquetas, 10x Empanadas', total: '$45.000', estado: 'Completado', color: '#d1fae5', text: '#065f46' },
-    { id: '#P-3090', sucursal: 'Santiago Centro', detalle: '15x Croissants, 5x Café', total: '$28.500', estado: 'En Camino', color: '#dbeafe', text: '#1e40af' },
-    { id: '#P-3089', sucursal: 'Sucursal Las Condes', detalle: '40x Baguettes, 20x Donuts', total: '$62.000', estado: 'Preparando', color: '#fef3c7', text: '#b45309' },
-    { id: '#P-3088', sucursal: 'Sucursal Maipú', detalle: '50x Hallullas', total: '$18.000', estado: 'Pendiente', color: '#fee2e2', text: '#991b1b' }
-  ];
+  constructor(
+    private router: Router,
+    private http: HttpClient
+  ) {}
+
+  ngOnInit() {
+    this.obtenerPedidosDelBackend();
+  }
+
+  obtenerPedidosDelBackend() {
+    // Construye la URL dinámica usando el environment (Localhost o AWS EC2)
+    const urlBackend = `${environment.apiUrl}/pedidos`;
+
+    // Esta petición GET activará el interceptor de MSAL para inyectar el Token Bearer automáticamente
+    this.http.get<any[]>(urlBackend).subscribe({
+      next: (data) => {
+        this.pedidosRecientes = data;
+        this.isLoading = false;
+        console.log('Pedidos obtenidos exitosamente del backend:', data);
+      },
+      error: (err) => {
+        console.error('Error al conectar con el backend para los pedidos:', err);
+        this.isLoading = false;
+      }
+    });
+  }
 
   verTodosPedidos() {
+    // Si tienes una ruta específica para todos los pedidos, puedes redirigir:
+    // this.router.navigate(['/mis-pedidos']);
     alert('📋 Abriendo listado completo de transacciones y auditoría operacional.');
   }
 

@@ -2,6 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 import { 
   PublicClientApplication, 
@@ -47,14 +48,16 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   };
 }
 
-// Configuración del Interceptor para inyectar el Token a tu EC2
+// Configuración del Interceptor adaptada dinámicamente con el environment
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   
-  // 1. IP Elástica de AWS apuntando al nuevo Scope personalizado "Ale-Pedidos360"
-  protectedResourceMap.set('http://100.50.157.1:8080/*', ['api://501e8863-bd34-48ca-98ad-2c8ff1f8873d/Ale-Pedidos360']);
+  // Mapea automáticamente todas las APIs declaradas en environment.ts con el scope de Entra ID
+  environment.apiUris.forEach(uri => {
+    protectedResourceMap.set(uri, [environment.entraScope]);
+  });
   
-  // 2. Para leer el perfil de Microsoft del usuario
+  // Para leer el perfil de Microsoft del usuario
   protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
 
   return {
@@ -83,7 +86,7 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: MSALInterceptorConfigFactory // Aplica la configuración a tu IP
+      useFactory: MSALInterceptorConfigFactory // Aplica la configuración del interceptor
     },
     MsalService,
     MsalGuard,

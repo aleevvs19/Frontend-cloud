@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { CartService } from '../cart';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-carrito',
@@ -12,7 +14,10 @@ import { CartService } from '../cart';
 export class CarritoComponent implements OnInit {
   productosCarrito: any[] = [];
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    private cartService: CartService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit() {
     // Obtenemos los productos reales sincronizados desde el servicio
@@ -42,7 +47,26 @@ export class CarritoComponent implements OnInit {
       alert('Tu carrito está vacío.');
       return;
     }
-    alert('🎉 ¡Pedido realizado con éxito! Puedes revisarlo en la sección "Mis Pedidos".');
-    this.vaciarCarrito();
+
+    const payloadPedido = {
+      items: this.productosCarrito,
+      total: this.totalPagar,
+      fecha: new Date().toISOString()
+    };
+
+    const urlBackend = `${environment.apiUrl}/pedidos`;
+
+    // Dispara la petición POST hacia el backend, activando el interceptor de MSAL para inyectar el Token Bearer
+    this.http.post(urlBackend, payloadPedido).subscribe({
+      next: (response) => {
+        console.log('Respuesta del backend:', response);
+        alert('🎉 ¡Pedido realizado con éxito y registrado en el servidor!');
+        this.vaciarCarrito();
+      },
+      error: (err) => {
+        console.error('Error al conectar con el backend:', err);
+        alert('Hubo un error al procesar tu pedido. Revisa la consola.');
+      }
+    });
   }
 }
