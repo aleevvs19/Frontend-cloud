@@ -9,15 +9,21 @@
     </div>
   </div>
 
-  <!-- Mensaje de estado vacío -->
-  <div *ngIf="misPedidos.length === 0" class="empty-state">
+  <!-- ESTADO DE CARGA (Agregado para la conexión HTTP) -->
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Conectando con el servidor en AWS...</p>
+  </div>
+
+  <!-- Mensaje de estado vacío (Solo si no está cargando y no hay pedidos) -->
+  <div *ngIf="!cargando && misPedidos.length === 0" class="empty-state">
     <span class="empty-icon">🛍️</span>
     <h3>Aún no tienes pedidos</h3>
     <p>Explora nuestras sucursales y pide algo delicioso.</p>
   </div>
 
   <!-- Lista de Tarjetas de Pedidos -->
-  <div class="pedidos-list">
+  <div *ngIf="!cargando" class="pedidos-list">
     <div *ngFor="let pedido of misPedidos" class="pedido-card">
       
       <!-- Información del pedido -->
