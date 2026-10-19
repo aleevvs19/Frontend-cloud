@@ -1,22 +1,27 @@
+
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+  HTTP_INTERCEPTORS
+} from '@angular/common/http';
 import { environment } from '../environments/environment';
 
-import { 
-  PublicClientApplication, 
-  InteractionType, 
+import {
+  PublicClientApplication,
+  InteractionType,
   BrowserCacheLocation,
-  Configuration 
+  Configuration
 } from '@azure/msal-browser';
 
-import { 
-  MsalService, 
-  MsalGuard, 
-  MsalBroadcastService, 
-  MSAL_INSTANCE, 
-  MSAL_GUARD_CONFIG, 
+import {
+  MsalService,
+  MsalGuard,
+  MsalBroadcastService,
+  MSAL_INSTANCE,
+  MSAL_GUARD_CONFIG,
   MsalGuardConfiguration,
   MsalInterceptor,
   MSAL_INTERCEPTOR_CONFIG,
@@ -27,8 +32,8 @@ export const msalConfig: Configuration = {
   auth: {
     clientId: '501e8863-bd34-48ca-98ad-2c8ff1f8873d',
     authority: 'https://login.microsoftonline.com/8e80f94c-2366-4206-8648-dd4a63286b84',
-    redirectUri: 'https://100.50.157.1',
-    postLogoutRedirectUri: 'https://100.50.157.1'
+    redirectUri: 'http://localhost:4200',
+    postLogoutRedirectUri: 'http://localhost:4200'
   },
   cache: {
     cacheLocation: BrowserCacheLocation.LocalStorage
@@ -48,17 +53,19 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
   };
 }
 
-// Configuración del Interceptor adaptada dinámicamente con el environment
+// Configuración del interceptor con las API del environment
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  
-  // Mapea automáticamente todas las APIs declaradas en environment.ts con el scope de Entra ID
+
   environment.apiUris.forEach(uri => {
     protectedResourceMap.set(uri, [environment.entraScope]);
   });
-  
-  // Para leer el perfil de Microsoft del usuario
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
+
+  // Perfil del usuario en Microsoft Graph
+  protectedResourceMap.set(
+    'https://graph.microsoft.com/v1.0/me',
+    ['user.read']
+  );
 
   return {
     interactionType: InteractionType.Redirect,
@@ -70,11 +77,11 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()), // Habilita las peticiones HTTP
+    provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: MsalInterceptor,
-      multi: true // Registra el interceptor
+      multi: true
     },
     {
       provide: MSAL_INSTANCE,
@@ -86,7 +93,7 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: MSAL_INTERCEPTOR_CONFIG,
-      useFactory: MSALInterceptorConfigFactory // Aplica la configuración del interceptor
+      useFactory: MSALInterceptorConfigFactory
     },
     MsalService,
     MsalGuard,
