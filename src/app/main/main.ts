@@ -21,7 +21,7 @@ interface ProductoBackend {
   sucursalId: number;
 }
 
-// Producto que se muestra en Angular
+// Producto mostrado en Angular
 interface ProductoVista {
   productoId: number;
   sucursalId: number;
@@ -35,7 +35,12 @@ interface ProductoVista {
 @Component({
   selector: 'app-main',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet
+  ],
   templateUrl: './main.html',
   styleUrl: './main.css'
 })
@@ -76,7 +81,7 @@ export class MainComponent implements OnInit {
     }
   ];
 
-  // Productos reales obtenidos desde Spring Boot
+  // Productos obtenidos desde Spring Boot
   featuredProducts: ProductoVista[] = [];
 
   constructor(
@@ -93,6 +98,7 @@ export class MainComponent implements OnInit {
     const accounts = this.msalService.instance.getAllAccounts();
 
     if (accounts.length > 0) {
+
       this.userName =
         accounts[0].name ||
         accounts[0].username ||
@@ -102,7 +108,7 @@ export class MainComponent implements OnInit {
 
       const correoUsuario = accounts[0].username.toLowerCase();
 
-      // Control visual para mostrar acceso al panel de administración
+      // Control visual del panel de administración
       if (
         correoUsuario.includes('ale.salazarv') ||
         correoUsuario.includes('admin')
@@ -140,22 +146,27 @@ export class MainComponent implements OnInit {
           let etiqueta = 'Producto';
 
           if (nombre.includes('baguette')) {
+
             imagen = '🥖';
             etiqueta = 'Artesanal';
 
           } else if (nombre.includes('croissant')) {
+
             imagen = '🥐';
             etiqueta = 'Especialidad';
 
           } else if (nombre.includes('latte')) {
+
             imagen = '🧋';
             etiqueta = 'Frío';
 
           } else if (nombre.includes('kuchen')) {
+
             imagen = '🥮';
             etiqueta = 'Tradicional';
 
           } else if (nombre.includes('café')) {
+
             imagen = '☕';
             etiqueta = 'Cafetería';
           }
@@ -171,17 +182,10 @@ export class MainComponent implements OnInit {
           };
         });
 
-        // Finalizar carga
         this.cargandoProductos = false;
         this.errorProductos = '';
 
-        // IMPORTANTE: Actualizar la pantalla de Angular
         this.cdr.detectChanges();
-
-        console.log(
-          'Productos cargados desde Spring Boot:',
-          this.featuredProducts
-        );
       },
 
       error: (err) => {
@@ -193,20 +197,22 @@ export class MainComponent implements OnInit {
         this.errorProductos =
           `No se pudieron cargar los productos. Error HTTP: ${err.status}`;
 
-        // Actualizar la interfaz también cuando hay errores
         this.cdr.detectChanges();
       }
     });
   }
 
+  // Agregar un producto al carrito
   agregarAlCarrito(prod: ProductoVista): void {
 
+    // Validar stock disponible
     if (prod.stock <= 0) {
       alert('Este producto no tiene stock disponible.');
       return;
     }
 
-    const productosActuales = this.cartService.obtenerProductos();
+    const productosActuales =
+      this.cartService.obtenerProductos();
 
     // Evitar mezclar productos de distintas sucursales
     if (
@@ -221,17 +227,24 @@ export class MainComponent implements OnInit {
       return;
     }
 
+    // Guardar producto en el carrito
     this.cartService.agregarProducto(prod);
+
+    // Actualizar la interfaz
+    this.cdr.detectChanges();
   }
 
+  // Abrir carrito
   irAlCarrito(): void {
     this.router.navigate(['/main/carrito']);
   }
 
+  // Abrir panel de administración
   irAlAdmin(): void {
     this.router.navigate(['/main/admin']);
   }
 
+  // Cerrar sesión de Microsoft
   logout(): void {
     this.msalService.logoutRedirect({
       postLogoutRedirectUri: 'http://localhost:4200/login'

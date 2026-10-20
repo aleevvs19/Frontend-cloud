@@ -5,6 +5,14 @@ import { HttpClient } from '@angular/common/http';
 import { CartService } from '../cart';
 import { environment } from '../../environments/environment';
 
+interface ProductoBackend {
+  id: number;
+  nombre: string;
+  precio: number;
+  stock: number;
+  sucursalId: number;
+}
+
 @Component({
   selector: 'app-carrito',
   standalone: true,
@@ -15,7 +23,7 @@ import { environment } from '../../environments/environment';
 export class CarritoComponent implements OnInit {
 
   productosCarrito: any[] = [];
-  procesandoCompra: boolean = false;
+  procesandoCompra = false;
 
   constructor(
     private cartService: CartService,
@@ -27,188 +35,198 @@ export class CarritoComponent implements OnInit {
     this.productosCarrito = this.cartService.obtenerProductos();
   }
 
-  // Calcular el total mostrado en el carrito
   get totalPagar(): number {
     return this.productosCarrito.reduce((total, producto) => {
-
       const precio = Number(
-        String(producto.price)
+        String(producto.price ?? '0')
           .replace('$', '')
           .replace(/\./g, '')
           .replace(',', '.')
           .trim()
       ) || 0;
 
-      const cantidad = Number(producto.cantidad ?? 1);
-
-      return total + precio * cantidad;
-
+      return total + precio * Number(producto.cantidad ?? 1);
     }, 0);
   }
 
-  // Eliminar un producto
   eliminarItem(index: number): void {
-
-    if (this.procesandoCompra) {
-      return;
-    }
+    if (this.procesandoCompra) return;
 
     this.cartService.eliminarProducto(index);
-
-    this.productosCarrito =
-      this.cartService.obtenerProductos();
-
+    this.productosCarrito = this.cartService.obtenerProductos();
     this.cdr.detectChanges();
   }
 
-  // Vaciar el carrito
   vaciarCarrito(): void {
-
-    if (this.procesandoCompra) {
-      return;
-    }
+    if (this.procesandoCompra) return;
 
     this.cartService.vaciarCarrito();
-
     this.productosCarrito = [];
-
     this.cdr.detectChanges();
   }
 
-  // Confirmar la compra con Spring Boot
+  private finalizarProceso(): void {
+    this.procesandoCompra = false;
+    this.cdr.detectChanges();
+  }
+
+  private normalizarNombre(nombre: string): string {
+    return nombre
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
   confirmarCompra(): void {
 
-    if (this.procesandoCompra) {
-      return;
-    }
+    if (this.procesandoCompra) return;
 
     if (this.productosCarrito.length === 0) {
       alert('Tu carrito está vacío.');
       return;
     }
 
-    // Obtener la sucursal del primer producto
-    const sucursalId = Number(
-      this.productosCarrito[0].sucursalId
-    );
-
-    if (!Number.isInteger(sucursalId) || sucursalId <= 0) {
-      alert(
-        'Hay productos antiguos en el carrito. Vacía el carrito y agrégalos nuevamente.'
-      );
-      return;
-    }
-
-    // Agrupar los productos por su ID real
-    const cantidades = new Map<number, number>();
-    const stocks = new Map<number, number>();
-
-    for (const producto of this.productosCarrito) {
-
-      const productoId = Number(producto.productoId);
-      const cantidad = Number(producto.cantidad ?? 1);
-      const stock = Number(producto.stock);
-
-      // Validar producto y cantidad
-      if (
-        !Number.isInteger(productoId) ||
-        productoId <= 0 ||
-        !Number.isInteger(cantidad) ||
-        cantidad <= 0
-      ) {
-        alert(
-          'Hay un producto con datos inválidos. Actualiza el carrito.'
-        );
-        return;
-      }
-
-      // Validar sucursal
-      if (Number(producto.sucursalId) !== sucursalId) {
-        alert(
-          'No puedes comprar productos de distintas sucursales en un mismo pedido.'
-        );
-        return;
-      }
-
-      // Acumular unidades del mismo producto
-      const acumulado =
-        (cantidades.get(productoId) ?? 0) + cantidad;
-
-      cantidades.set(productoId, acumulado);
-      stocks.set(productoId, stock);
-    }
-
-    // Validar stock
-    for (const [productoId, cantidad] of cantidades) {
-
-      const stock = stocks.get(productoId);
-
-      if (
-        stock === undefined ||
-        !Number.isFinite(stock) ||
-        cantidad > stock
-      ) {
-        alert(
-          `Stock insuficiente para el producto ID ${productoId}.`
-        );
-        return;
-      }
-    }
-
-    // Crear los detalles que espera Spring Boot
-    const detalles = Array.from(
-      cantidades,
-      ([productoId, cantidad]) => ({
-        productoId,
-        cantidad
-      })
-    );
-
-    // Estructura correcta del pedido
-    const payloadPedido = {
-      sucursalId: sucursalId,
-      tipoEntrega: 'RETIRO_EN_TIENDA',
-      detalles: detalles
-    };
-
-    const urlBackend =
-      `${environment.apiUrl}/pedidos`;
-
     this.procesandoCompra = true;
     this.cdr.detectChanges();
 
-    // Enviar pedido usando la autenticación MSAL
-    this.http.post(urlBackend, payloadPedido).subscribe({
+    // Consultar los productos REALES antes de comprar
+    this.http.get<ProductoBackend[]>(
+      `${environment.apiUrl}/productos`
+    ).subscribe({
 
-      next: (pedidoGuardado) => {
+      next: (productosBackend) => {
 
-        console.log(
-          'Pedido guardado en Spring Boot:',
-          pedidoGuardado
+        const cantidades = new Map<number, number>();
+        let sucursalId: number | null = null;
+
+        for (const item of this.productosCarrito) {
+
+          // Productos de la pantalla principal
+          const idReal = Number(item.productoId);
+
+          let producto = Number.isInteger(idReal) && idReal > 0
+            ? productosBackend.find(p => Number(p.id) === idReal)
+            : undefined;
+
+          // Compatibilidad con productos de Explorar
+          if (!producto) {
+            const nombre = this.normalizarNombre(
+              String(item.name ?? item.nombre ?? '')
+            );
+
+            producto = productosBackend.find(p =>
+              this.normalizarNombre(p.nombre) === nombre
+            );
+          }
+
+          if (!producto) {
+            this.finalizarProceso();
+            alert(
+              `No se encontró "${item.name}" en el catálogo real.`
+            );
+            return;
+          }
+
+          const id = Number(producto.id);
+          const sucursal = Number(producto.sucursalId);
+          const cantidad = Number(item.cantidad ?? 1);
+
+          if (
+            !Number.isInteger(id) || id <= 0 ||
+            !Number.isInteger(sucursal) || sucursal <= 0 ||
+            !Number.isInteger(cantidad) || cantidad <= 0
+          ) {
+            this.finalizarProceso();
+            alert(
+              `El backend entregó datos inválidos para "${producto.nombre}".`
+            );
+            console.error('Producto del backend:', producto);
+            return;
+          }
+
+          if (sucursalId === null) {
+            sucursalId = sucursal;
+          }
+
+          if (sucursalId !== sucursal) {
+            this.finalizarProceso();
+            alert(
+              'No puedes mezclar productos de distintas sucursales.'
+            );
+            return;
+          }
+
+          const acumulado = (cantidades.get(id) ?? 0) + cantidad;
+
+          if (acumulado > Number(producto.stock)) {
+            this.finalizarProceso();
+            alert(`Stock insuficiente para "${producto.nombre}".`);
+            return;
+          }
+
+          cantidades.set(id, acumulado);
+        }
+
+        if (sucursalId === null || cantidades.size === 0) {
+          this.finalizarProceso();
+          alert('No se pudo preparar el pedido.');
+          return;
+        }
+
+        const detalles = Array.from(
+          cantidades,
+          ([productoId, cantidad]) => ({
+            productoId,
+            cantidad
+          })
         );
 
-        this.procesandoCompra = false;
+        const pedido = {
+          sucursalId,
+          tipoEntrega: 'RETIRO_EN_TIENDA',
+          detalles
+        };
 
-        // Vaciar solamente después de una respuesta exitosa
-        this.vaciarCarrito();
+        console.log('Pedido enviado a Spring Boot:', pedido);
 
-        alert(
-          '🎉 ¡Pedido registrado correctamente!'
-        );
+        // Confirmar compra
+        this.http.post(
+          `${environment.apiUrl}/pedidos`,
+          pedido
+        ).subscribe({
+
+          next: (respuesta) => {
+
+            console.log('Pedido registrado:', respuesta);
+
+            this.finalizarProceso();
+            this.vaciarCarrito();
+
+            alert('¡Pedido registrado correctamente!');
+          },
+
+          error: (error) => {
+
+            console.error('Error del backend:', error);
+
+            this.finalizarProceso();
+
+            alert(
+              `No se pudo confirmar la compra. HTTP ${error.status}`
+            );
+          }
+        });
       },
 
-      error: (err) => {
+      error: (error) => {
 
-        console.error(
-          'Error al confirmar el pedido:',
-          err
-        );
+        console.error('Error al consultar productos:', error);
 
-        this.procesandoCompra = false;
-        this.cdr.detectChanges();
+        this.finalizarProceso();
 
         alert(
-          `No se pudo confirmar el pedido. Error HTTP: ${err.status}`
+          `No se pudieron consultar los productos. HTTP ${error.status}`
         );
       }
     });
